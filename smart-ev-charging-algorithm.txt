@@ -1,0 +1,47 @@
+Initialize available_power = 92
+Initialize devices = empty list (FIFO queue)
+Initialize max_device_capacity = 40
+
+Function connect_device(device_id, power_request):
+    If power_request > max_device_capacity:
+        power_request = max_device_capacity
+    If available_power >= power_request:
+        Add device to devices queue with device_id and requested power
+        Decrease available_power by power_request
+        Print "Device connected, allocated", power_request, "units"
+    Else:
+        Print "Not enough power to connect device"
+
+Function disconnect_device(device_id):
+    Find device in devices list
+    If device is found:
+        Return power of device
+        Add device power back to available_power
+        Remove device from devices list
+        Print "Device disconnected, power returned"
+    Else:
+        Print "Device not found"
+
+Function adjust_device_power(device_id, new_power):
+    Find device in devices list
+    If device is found:
+        Current power allocation = device's current power
+        If new_power > max_device_capacity:
+            new_power = max_device_capacity
+        If available_power + (Current power allocation - new_power) >= 0:
+            Update device's power to new_power
+            available_power += (Current power allocation - new_power)
+            Print "Device power adjusted to", new_power, "units"
+        Else:
+            Print "Not enough available power to adjust device"
+
+Function process_devices():
+    For each device in devices queue:
+        Print "Device", device.device_id, "allocated", device.power, "units"
+
+Example Flow:
+t=0: connect_device("A", 40)
+t=1: connect_device("B", 40)
+t=2: connect_device("C", 12)  // Remaining 12 units allocated to C
+t=3: adjust_device_power("A", 20)  // A reduces power to 20, C increases to 32
+t=4: disconnect_device("B")  // B disconnects, C increases to 40
